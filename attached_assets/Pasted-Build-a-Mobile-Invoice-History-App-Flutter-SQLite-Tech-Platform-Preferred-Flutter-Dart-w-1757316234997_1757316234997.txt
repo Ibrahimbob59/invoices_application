@@ -1,0 +1,109 @@
+Build a Mobile “Invoice History” App (Flutter + SQLite)
+Tech & Platform
+
+Preferred: Flutter (Dart) with sqflite for local SQLite.
+
+Alternatives (only if clearly easier): Native Android (Java + Room). If you switch, keep every feature below identical.
+
+State management: Riverpod or BLoC (choose one and be consistent).
+
+Architecture: Clean Architecture (presentation / application / data / domain layers).
+
+Design: Material 3, professional UI, light/dark themes, RTL support (Arabic labels), responsive for phones/tablets.
+
+Core Features (Screens in a Sidebar)
+
+Use a Drawer/Sidebar with items:
+
+Home
+
+Invoices
+
+Insert New Company
+
+Export / Import Database (Backup)
+
+1) Home Screen
+
+Top: Company selector with search-as-you-type (realtime filtering) over company name.
+
+Actions:
+
+Add New Invoice for the selected company.
+
+Scan Invoice using phone camera (document/receipt scan) and OCR to capture text into notes.
+
+Suggested packages: mobile_scanner or camera + google_mlkit_text_recognition.
+
+Attach From Storage (pick image/PDF) and store file path (do not store the file itself in DB).
+
+Invoice Form Fields:
+
+Company: pre-filled from selection (required).
+
+Reference (المرجع): free text (required, unique per company preferred).
+
+Date: default to device current date/time, but user can change via date picker.
+
+Notes: multiline.
+
+Attachment path(s): one or multiple (optional).
+
+Save button (primary CTA).
+
+Behavior:
+
+Validate required fields.
+
+Show toast/snackbar on success/failure.
+
+2) Invoices Screen (Search & List)
+
+Search Bar with realtime filtering (as user types) across:
+
+Reference (المرجع)
+
+Notes
+
+Company name
+
+Date (support “YYYY-MM-DD” and partials; optionally range via filter chip)
+
+Instant results (no submit).
+
+List items show: Company, Reference, Date, first line of Notes, and an icon if attachments exist.
+
+Detail view on tap with full fields and open attachments.
+
+Edit/Delete invoice actions.
+
+3) Insert New Company
+
+Fields: Name (required, unique), Phone, Email, Address, Tax ID, Notes (all optional).
+
+Save with validation.
+
+List existing companies with edit/delete.
+
+4) Export / Import Database (Backup)
+
+Export (Backup):
+
+Copy the SQLite DB file to a user-chosen location (or app documents) and provide Share options (Share sheet).
+
+File name format:
+{appName}_backup_{yyyy-MM-dd_HH-mm-ss}.db
+
+Let user save anywhere, share, or send to Google Drive via the system share sheet (no custom OAuth needed).
+
+Import (Insert DB):
+
+Button: “Insert DB” – lets user choose a previously exported .db file and replace current DB after confirmation.
+
+On success, refresh app state and show snackbar.
+
+Safety:
+
+Before restore, auto-backup the current DB with suffix _preRestore.
+
+Handle version mismatches via migrations.
