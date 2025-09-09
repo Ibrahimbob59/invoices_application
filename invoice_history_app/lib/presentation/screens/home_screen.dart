@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../core/constants/app_strings.dart';
-import '../../application/providers/company_provider.dart';
 import '../../application/providers/invoice_provider.dart';
 import '../../domain/entities/company.dart';
 import '../../domain/entities/invoice.dart';
@@ -24,7 +23,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   
   DateTime _selectedDate = DateTime.now();
   Company? _selectedCompany;
-  List<String> _attachmentPaths = [];
+  final List<String> _attachmentPaths = [];
 
   @override
   void dispose() {
@@ -191,7 +190,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             child: CameraScanButton(
                               onScanned: (text) {
                                 // Add scanned text to notes
-                                _notesController.text = _notesController.text + '\\n$text';
+                                _notesController.text = '${_notesController.text}\\n$text';
                                 ref.read(invoiceFormProvider.notifier).updateNotes(_notesController.text);
                               },
                             ),

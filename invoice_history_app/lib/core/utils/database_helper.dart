@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import '../constants/database_constants.dart';
 
 class DatabaseHelper {
@@ -64,7 +63,7 @@ class DatabaseHelper {
 
     // Create FTS virtual table for fast search
     await db.execute('''
-      CREATE VIRTUAL TABLE ${DatabaseConstants.invoicesFtsTable} USING fts5(
+      CREATE VIRTUAL TABLE ${DatabaseConstants.invoicesFtsTable} USING fts4(
         ${DatabaseConstants.ftsReference},
         ${DatabaseConstants.ftsNotes},
         ${DatabaseConstants.ftsCompanyName},

@@ -1,6 +1,5 @@
 import 'package:sqflite/sqflite.dart';
 import '../models/invoice_model.dart';
-import '../models/company_model.dart';
 import '../../core/constants/database_constants.dart';
 import '../../core/utils/database_helper.dart';
 

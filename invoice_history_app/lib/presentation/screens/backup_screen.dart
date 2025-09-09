@@ -68,12 +68,13 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                     const Text(
                       'Create a backup of your invoice database that you can save or share.',
                       style: TextStyle(fontSize: 14),
+                      
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'قم بإنشاء نسخة احتياطية من قاعدة بيانات الفواتير يمكنك حفظها أو مشاركتها.',
                       style: TextStyle(fontSize: 12, color: Colors.grey),
-                      textDirection: TextDirection.rtl,
+                      
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
@@ -141,10 +142,10 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                       style: TextStyle(fontSize: 14),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'استعادة البيانات من ملف النسخة الاحتياطية. سيتم استبدال البيانات الحالية.',
                       style: TextStyle(fontSize: 12, color: Colors.grey),
-                      textDirection: TextDirection.rtl,
+                    
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
@@ -175,27 +176,27 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             // Info Card
             Card(
               color: Colors.blue.shade50,
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.info_outline,
                       color: Colors.blue,
                       size: 24,
                     ),
-                    SizedBox(height: 8),
-                    Text(
+                    const SizedBox(height: 8),
+                    const Text(
                       'Backup files are saved with timestamp for easy identification. Keep your backups safe and secure.',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 12),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       'ملفات النسخ الاحتياطي محفوظة بالوقت والتاريخ للتعرف عليها بسهولة. احتفظ بنسخك الاحتياطية آمنة.',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 10, color: Colors.grey),
-                      textDirection: TextDirection.rtl,
+                      
                     ),
                   ],
                 ),
@@ -208,6 +209,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   }
 
   Future<void> _exportDatabase() async {
+    if (!mounted) return;
+    
     setState(() {
       _isBackingUp = true;
     });
@@ -238,20 +241,24 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         subject: 'Invoice History Backup',
       );
 
-      if (result.status == ShareResultStatus.success) {
+      if (result.status == ShareResultStatus.success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text(AppStrings.backupSuccess)),
         );
       }
 
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppStrings.backupError}: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppStrings.backupError}: $e')),
+        );
+      }
     } finally {
-      setState(() {
-        _isBackingUp = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isBackingUp = false;
+        });
+      }
     }
   }
 
@@ -290,6 +297,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
 
     if (confirmed != true) return;
 
+    if (!mounted) return;
     setState(() {
       _isRestoring = true;
     });
@@ -303,6 +311,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       );
 
       if (result == null) {
+        if (mounted) {
+          setState(() {
+            _isRestoring = false;
+          });
+        }
         return;
       }
 
@@ -327,21 +340,27 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       // Restore from selected file
       await dbHelper.copyDatabaseFrom(filePath);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.restoreSuccess)),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(AppStrings.restoreSuccess)),
+        );
 
-      // Refresh all providers to reflect the restored data
-      _refreshAllProviders();
+        // Refresh all providers to reflect the restored data
+        _refreshAllProviders();
+      }
 
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppStrings.restoreError}: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppStrings.restoreError}: $e')),
+        );
+      }
     } finally {
-      setState(() {
-        _isRestoring = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isRestoring = false;
+        });
+      }
     }
   }
 
